@@ -1,0 +1,1348 @@
+
+\documentclass[a4paper,9pt]{extarticle}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[german]{babel}
+\usepackage{tabularx}
+\usepackage{tikz}
+
+\usepackage{amsmath,amssymb,textcomp}
+\everymath{\displaystyle}
+
+\renewcommand\familydefault{\sfdefault}
+
+\usepackage{multicol}
+\setlength{\columnseprule}{0pt}
+\setlength{\columnsep}{20.0pt}
+
+
+\usepackage{geometry}
+\geometry{
+a4paper,
+total={210mm,297mm},
+left=10mm,right=10mm,top=15mm,bottom=15mm}
+
+% moar space = increased readability
+\linespread{1.2}
+
+% disable automatic indent
+% http://tex.stackexchange.com/a/59248
+\newlength\tindent
+\setlength{\tindent}{\parindent}
+%\setlength{\parindent}{0pt}
+\renewcommand{\indent}{\hspace*{\tindent}}
+
+% reduce space between enumeration items
+% http://stackoverflow.com/a/4974583
+% package documentation: ftp://ftp.rrzn.uni-hannover.de/pub/mirror/tex-archive/macros/latex/contrib/enumitem/enumitem.pdf (3.8 Compact lists)
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=14pt}
+
+%% custom title
+%\makeatletter
+%\renewcommand*{\maketitle}{
+%\noindent
+%\begin{minipage}{0.65\textwidth}
+%\begin{tikzpicture}
+%\node[rectangle,inner sep=10pt,fill=gray!50!black,text width= 0.95\textwidth] {\color{white}\Huge \@title};
+%\end{tikzpicture}
+%\end{minipage}
+%\begin{minipage}{0.35\textwidth}
+%\begin{tikzpicture}
+%\node[rectangle,inner sep=9.8pt,draw=gray!50!gray,text width= 0.95\textwidth] {\color{darkgray}\Huge \hfill \@author};
+%\end{tikzpicture}
+%\end{minipage}
+%\bigskip\bigskip
+%}
+%\makeatother
+
+% redo the math environements spacing
+\let\oldmath=\math
+\let\endoldmath=\endmath
+% commented out, as this makes math overlap with text
+%\renewenvironment{math}{\vspace{-4mm}\begin{oldmath}}{\end{oldmath}\vspace{0mm}}
+
+% Custom macros
+% see https://en.wikibooks.org/wiki/LaTeX/Macros
+
+%subsubsubsection
+\newcommand{\subsubsubsection}[1]{\textcolor{green!20!black}{\textbf{#1}} \\}
+
+% limes to infinity! (and beyond! \o/)
+%\newcommand{\liminfty}[2][n]{\lim_{#1 \to \infty}{#2}}
+\newcommand{\liminfty}[1][n]{\lim_{#1 \to \infty}}
+
+% infinite sum
+%\newcommand{\suminfty}[2][k = 1]{\sum_{#1}^{\infty}{#2}}
+\newcommand{\suminfty}[1][k = 1]{\sum_{#1}^{\infty}}
+
+% Integral from a to b
+\newcommand{\intab}[1] {\int_{a}^{b} #1 dx}
+
+% Integral from a to b of f(x)
+\newcommand{\intabf}{\int_{a}^{b} f(x) dx}
+
+%Varianz
+\newcommand{\Var}{\text{Var}}
+
+
+
+\title{Diskrete Wahrscheinlichkeitstheorie WS1718}
+\author{}
+\date{2018}
+
+%costum layout
+\setlength{\parindent}{0cm}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{
+	\strut\rlap{\color{green!50!black}\rule[-\dp\strutbox]{\headwidth}{\headheight}}
+	\textcolor {white} {Zusammenfassung: Diskrete Wahrscheinlichkeitstheorie}}
+\fancyfoot[L]{
+	\strut\rlap{\color{green!50!black}\rule[-\dp\strutbox]{\headwidth}{\headheight}}
+	\textcolor {white} {zuletzt aktualisiert: \today}}
+\fancyhead[R]{\textcolor{white}{Sommersemester 2018}}
+%\lfoot{}
+\fancyfoot[R]{\textcolor{white} {\thepage}}
+%\renewcommand{\footrulewidth}{1pt}
+
+\usepackage{titlesec}
+
+\titleformat{\section}
+{\color{cyan!80!blue}\normalfont\Large\bfseries}
+{\color{blue!60!black}\thesection}{1em}{}
+
+\titleformat{\subsubsection}
+{\color{blue!30!black!70}\normalfont\bfseries}
+{\color{black!60}\thesection}{1em}{}
+
+\setcounter{secnumdepth}{4}
+
+\titleformat{\paragraph}
+{\color{green!30!black!70}\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+
+%TODO
+%Simulation von Zufallsvariablen p. 215 (224)
+%Laplace-Prinzip in kontinuierlichen Wahrscheinlichkeitsräumen p. 224 (233)
+%Random-Walk p. 380 (390)
+
+
+\usepackage{tikz}
+
+
+%%costum warnings
+%\newcommand{\todo}[1]{\typeout{#1}}
+
+\twocolumn
+\begin{document}
+\section*{Diskrete Wahrscheinlichkeitstheorie}
+\subsection*{Grundlagen}
+\subsubsection*{Diskreter Wahrscheinlichkeitsraum}
+\begin{tabular}{ll}
+	diskreter W'keitsraum & $\Omega = \{\omega_1, \omega_2, \dots\}$ \\
+	Elementarereignis & $\omega_i$ \\
+	Elementarw'keit & $\Pr[\omega_i]$ \\
+	& $0 ≤ \Pr[\omega_i] ≤ 1$ \\
+	& $\sum_{\omega \in \Omega} \Pr[\omega] = 1$ \\
+	endlicher W'keitsraum & $\Omega = \{\omega_1, \dots, \omega_n\}$ \\
+	unendlicher W'keitsraum & $\Omega = \{\omega_1, \omega_2, \dots\}$
+\end{tabular}
+
+\subsubsection*{Ereignis}
+Eine Menge $E \subseteq \Omega$ heißt Ereignis mit Wahrscheinlichkeit \\
+$\Pr[E] = \sum_{\omega \in E} \Pr[\omega]$ \\
+
+Sind $A$ und $B$ Ereignisse $\implies$ $A \cup B$, $A \cap B$, $A \textbackslash B$, etc. sind Ereignisse \\
+Ist $A \subseteq B \implies \Pr[A] ≤ \Pr[B]$ \\
+$\Pr[∅] = 0$, $\Pr[\Omega] = 1$ \\
+$0 ≤ \Pr[E] ≤ 1$
+
+\subsubsection*{Komplementäres Ereignis}
+$\bar{E}$ heißt komplementäres Ereignis zu $E$ \\
+$\Pr[\bar{E}] = 1 - \Pr[E]$
+
+\subsubsection*{Disjunkte/Unvereinbare Ereignisse}
+Zwei Ereignisse $A$ und $B$ sind disjunkt/unvereinbar, falls $A \cap B = ∅$
+Ereignisse sind paarweise disjunkt, falls für alle Paare $i ≠ j$ gilt: $A_i \cap A_j = ∅$
+
+\subsubsection*{relative Häufigkeit}
+relative Häufigkeit von $E := \frac{\text{absolute Häufigkeit von } E}{\text{Anzahl aller Beobachtungen}}\\ = \frac{\text{Anzahl Eintreten von } E}{\text{Anzahl aller Beobachtungen}}$ \\
+
+Sei $X_i$ Bernoulli-verteilt mit Erfolgswahrscheinlichkeit $p \implies$ \\
+$Z = \frac 1 n (X_1 + \dots + Z_n)$ gibt die relative Häufigkeit an, mit der $X = 1$ bei $n$ Wiederholungen des Versuches eintritt
+
+\paragraph*{relative Abweichung}
+$|\frac 1 n \sum_i X_i - p|$
+
+\paragraph*{absolute Abweichung}
+$|\sum_i X_i - np|$
+
+\subsubsection*{Siebformel, Prinzip der Inklusion/Exklusion}
+Seien $A_1, \dots, A_n$ Ereignisse mit $n ≥ 2 \implies$ \\
+$\Pr\Big[\bigcup_{i=1}^n A_i \Big] = \sum_{i=1}^n \Pr[A_i] - \sum_{1≤i_1≤i_2≤n} \Pr[A_{i_1} \cap A_{i_2}] + - \dots \\
++ (-1)^{l-1} \sum_{1 ≤ i_1 < \dots < i_l ≤ n} \Pr[A_{i_1} \cap \dots \cap A_{i_l}] + - \dots \\
++ (-1)^{n-1} ⋅ \Pr[A_1 \cap \dots \cap A_n]$
+
+\subsubsection*{Additionssatz}
+Seien $A_1, \dots, A_n$ paarweise disjunkte Ereignisse $\implies$ \\
+$\Pr\Big[\bigcup_{i=1}^n A_i\Big] = \sum_{i=1}^n \Pr[A_i]$ \\
+$\Pr[A \cup B] = \Pr[A] + \Pr[B]$
+
+\subsubsection*{Boolesche Ungleichung}
+Seien $A_1, \dots, A_n$ Ereignisse $\implies$\\
+$\Pr\Big[\bigcup_{i=1}^n A_i \Big] ≤ \sum_{i=1}^n \Pr[A_i]$
+
+\subsubsection*{Prinzip von Laplace}
+Sei $E$ ein Ereignis und alle Elementarereignisse aus E gleich wahrscheinlich $\implies$
+$\Pr[E] = \frac{|E|}{|\Omega|}$
+
+\subsection*{Bedingte Wahrscheinlichkeit}
+Seien $A$ und $B$ Ereignisse mit $\Pr[B] > 0 \implies$ \\
+Die bedingte Wahrscheinlichkeit $\Pr[A|B]$ von A gegeben B ist: \\
+$\Pr[A|B] := \frac{\Pr[A \cap B]}{\Pr[B]}$ \\
+
+$\Pr[B|B] = 1$ \\
+$\Pr[A|\Omega] = \Pr[A]$ \\
+für festes $B$ ist $\Pr[A|B]$ proportional zu $\Pr[A \cap B]$ \\
+$\Pr[∅|B] = 0$ \\
+$\Pr[\bar{A}|B] = 1 - \Pr[A|B]$ \\
+$\Pr[A \cap B] = Pr[B|A] ⋅ \Pr[A] = \Pr[A|B] ⋅ \Pr[B]$
+
+\subsubsection*{Multiplikationssatz}
+Seien $A_1, \dots, A_n$ Ereignisse und $\Pr[A_1 \cap \dots \cap A_n] > 0 \implies$
+$\Pr[A_1 \cap \dots \cap A_n] = \Pr[A_1] ⋅ \Pr[A_2|A_1] ⋅ \Pr[A_3|A_1 \cap A_2] ⋅ \dots ⋅ \Pr[A_n|A_1 \cap \dots \cap A_{n-1}]$
+
+\subsubsection*{Satz von der totalen Wahrscheinlichkeit}
+Seien $A_1, \dots, A_n$ paarweise disjunkte Ereignisse und $B \subseteq A_1 \cup \dots \cup A_n \implies$
+$\Pr[B] = \sum_{i=1}^{n} \Pr[B|A_i] ⋅ \Pr[A_i]$
+
+\subsubsection*{Satz von Bayes}
+Seien $A_1, \dots, A_n$ paarweise disjunkte Ereignisse mit $\Pr[A_j] > 0 ~ \forall j$ und $B \subseteq A_1 \cup \dots \cup A_n$ ein Ereignis mit $\Pr[B] > 0 \implies$ \\
+Für beliebige $i = 1, \dots, n$ gilt: \\
+$\Pr[A_i|B] = \frac{\Pr[A_i \cap B]}{\Pr[B]} = \frac{\Pr[B|A_i] ⋅ \Pr[A_i]}{\sum_{j=1}^n \Pr[B|A_j] ⋅ \Pr[A_j]}$
+
+\subsection*{Unabhängigkeit}
+Sei $\Pr[A|B] \implies$ Die zwei Ereignisse $A$ und $B$ sind unabhängig, falls $B$ keinen Einfluss auf die Wahrscheinlichkeit des Eintretens von $A$ hat. Es gilt: \\
+$\Pr[A|B] = \Pr[A]$ \\
+$\Pr[A \cap B] = \Pr[A] ⋅ \Pr[B]$ \\
+
+Seien $A_1, \dots, A_n$ paarweise verschiedene Ereignisse $\implies$  $A_1, \dots, A_n$ sind unabhängig, falls für alle Teilmengen $I = \{i_1, \dots, i_k\} \subseteq \{1, \dots, n\}$ mit $i_1 < i_2 < \dots < i_k$ gilt, dass \\
+$\Pr[A_{i_1} \cap \dots \cap A_{i_k}] = \Pr[A_{i_1}] ⋅ \dots ⋅ \Pr[A_{i_k}]$\\
+
+Die paarweise verschiedenen Ereignisse $A_1, \dots, A_n$ sind genau dann unabhängig, wenn für alle $(s_1, \dots, s_n) \in \{0,1\}^n$ gilt, dass \\
+$\Pr[A_1^{s_1} \cap \dots \cap A_n^{s_n}] = \Pr[A_1^{s_1}] ⋅ \dots ⋅ \Pr[A_n^{s_n}]$,\\
+wobei $A_i^0 = \bar{A}_i$ und $A_i^1 = A_i$ \\
+
+Seien $A$ und $B$ zwei unabhängige Ereignisse $\implies$ $\bar{A}$ und $B$, $A$ und $\bar{B}$, $\bar{A}$ und $\bar{B}$ sind unabhängig.\\
+
+Seien $A, B$ und $C$ unabhängige Ereignisse $\implies$ $A \cap B$ und $C$ bzw. $A \cup B$ und $C$ sind unabhängig.
+
+\subsection*{Zufallsvariablen}
+Sei ein Wahrscheinlichkeitsraum auf der Ergebnismenge $\Omega$ gegeben. Eine Abbildung \\
+$X : \Omega → \mathbb{R}$ \\
+heißt (numerische) Zufallsvariable\\
+
+Zugehörige Ereignis: \\
+$A_i := \{\omega \in \Omega; X(\omega) = x_i\} = X^{-1}(x_i)$ \\
+
+Sei $\Omega$ endlich oder abzählbar unendlich $\implies$ die Zufallsvariable $X$ ist diskret und ihr Wertebereich ebenfalls endlich oder abzählbar unendlich
+
+\subsubsection*{Wertebereich}
+Sei $X$ eine Zufallsvariable $\implies$ \\
+$W_X := X(\Omega) = \{x \in \mathbb{R}; \exists \omega \in \Omega \text{ mit } X(\omega) = x\}$
+
+\subsubsection*{Dichtefunktion}
+%Zeigt die W'keit von $X$ (y-Achse) an der Stelle $x_i$ (x-Achse) \\
+$f_X : \mathbb{R} \ni x \mapsto \Pr[X = x] \in [0,1]$ \\
+($\Pr[X^{-1}(x_i)] = \Pr[``X = x_i"] = \Pr[X = x_i]$)
+
+\subsubsection*{Verteilungsfunktion}
+$F_X : \mathbb{R} \ni x \mapsto \Pr[X ≤ x] = \sum_{x' \in W_X : x' ≤ x} \Pr[X = x'] \in [0,1]$
+(Stammfunktion der Dichtefunktion)
+
+\subsubsection*{Erwartungswert}
+$\mathbb{E}[X] := \sum_{x \in W_X} x ⋅ \Pr[X = x] = \sum_{x \in W_X} x ⋅ f_X(x) = \sum_{\omega \in \Omega} X(\omega) ⋅ \Pr[\omega]$, \\
+falls $\sum_{x \in W_X} |x| ⋅ \Pr[X = x]$ konvergiert bzw. \\
+$\sum_{\omega \in \Omega} |X(\Omega)| ⋅ \Pr[\omega]$ existiert \\
+
+Sei $X$ Zufallsvariable mit $W_X \subseteq \mathbb{N}_0 \implies$ \\
+$\mathbb{E}[X] = \sum_{i=1}^{∞} \Pr[X ≥ i]$ \\
+
+Sei $X$ eine Zufallsvariable und $A_1, \dots, A_n$ paarweise disjunkte Ereignisse mit $A_1 \cup \dots \cup A_n = \Omega$ und $\Pr[A_1], \dots, \Pr[A_n] > 0 \implies$ \\
+$\mathbb{E}[X] = \sum_{i=1}^n \mathbb{E}[X|A_i] ⋅ \Pr[A_i]$, \\
+falls alle Erwartungswerte auf der rechten Seite existieren und \\
+$\sum_{i=1}^∞ |\mathbb{E}[X|A_i]| ⋅ \Pr[A_i]$ konvergiert
+
+\paragraph*{Monotonie des Erwartungswerts}
+Seien $X, Y$ Zufallsvariablen über dem W'keitsraum $\Omega$ $\implies$\\ 
+Ist $X(\omega) ≤ Y(\omega) ~\forall \omega \in \Omega \implies \mathbb{E}[X] ≤ \mathbb{E}[Y]$ \\
+Ist $a ≤ X(\omega) ≤ b ~\forall \omega \in \Omega \implies a ≤ \mathbb{E}[X] ≤ b$
+
+\paragraph*{Rechenregeln für den Erwartungswert}
+Sei $Y := f(X) = f \circ X$ mit $ f : \mathcal{D} → \mathbb{R}$ eine beliebige Funktion mit $W_X \subseteq \mathcal{D} \subseteq \mathbb{R} \implies$ \\
+$\mathbb{E}[f(X)] = \mathbb{E}[Y] = \sum_{x \in W_X} f(x) ⋅ \Pr[X = x] = \sum_{\omega \in \Omega} f(X(\omega)) ⋅ \Pr[\omega]$ \\
+
+\paragraph*{Linearität des Erwartungswerts}
+Sei $X$ eine Zufallsvariable und $a,b \in \mathbb{R} \implies$ \\
+$\mathbb{E}[a ⋅ X + b] = a ⋅ \mathbb{E}[X] + b$
+
+\subsubsection*{Varianz}
+Sei $X$ eine Zufallsvariable und $\mu = \mathbb{E}[X] \implies$ \\
+$\Var[X] := \mathbb{E}[(X - \mu)^2] = \sum_{x \in W_X} (x - \mu)^2 ⋅ \Pr[X = x]$ \\
+$\Var[X] = \mathbb{E}[X^2] - \mathbb{E}[X]^2$ \\
+$\Var[a ⋅ X + b] = a^2 ⋅ \Var[X]$
+
+\subsubsection*{Standardabweichung}
+$\sigma := \sqrt{\Var[X]}$ heißt Standardabweichung von $X$
+
+\subsubsection*{Momente}
+Sei $X$ eine Zufallsvariable $\implies$ \\
+$\mathbb{E}[X^k]$ ist das $k$-te Moment \\
+$\mathbb{E}[(X - \mathbb{E}[X])^k]$ ist das $k$-te zentrale Moment \\
+Der Erwartungswert ist erstes Moment, die Varianz ist zweites zentrales Moment
+
+\subsubsection*{Bedingte Zufallsvariable}
+Sei $X$ eine Zufallsvariable und $A$ ein Ereignis mit $\Pr[A] > 0 \implies$ \\
+Bedingte Zufallsvariable ist $X|A$ mit Dichte \\
+$f_{X|A}(x) := \Pr[X = x | A] = \frac{\Pr["X = x" \cap A]}{\Pr[A]}$ \\
+und Erwartungswert \\
+$\mathbb{E}[X|A] = \sum_{x \in W_X} x ⋅ f_{X|A}(x)$ \\
+
+\subsection*{Mehrere Zufallsvariablen}
+\subsubsection*{Gemeinsame Dichte}
+$f_{X,Y}(x,y) := \Pr[X = x, Y = y] = \Pr[\{\omega; X(\omega) = x, Y(\omega) = y\}]$ \\
+heißt gemeinsame Dichte der Zufallsvariablen $X$ und $Y$
+
+\subsubsection*{Randdichte}
+$f_X(x) = \Pr[X = x] = \sum_{y \in W_Y} f_{X,Y}(x,y)$ bzw. \\
+$f_Y(y) = \Pr[Y = y] = \sum_{x \in W_X} f_{X,Y}(x,y)$ \\
+
+\subsubsection*{gemeinsame Verteilung}
+Seien $X, Y$ Zufallsvariablen. Deren gemeinsame Verteilung ist: \\
+$F_{X,Y}(x,y) = \Pr[X ≤ x, Y ≤ y] = \Pr[\{\omega; X(\omega) ≤ x, Y(\omega) ≤ y\}]$ \\
+$= \sum_{x' ≤ x} \sum_{y' ≤ y} f_{X,Y} (x',y')$
+
+\subsubsection*{Randverteilung}
+$F_X(x) = \sum_{x' ≤ x} f_X(x') = \sum_{x' ≤ x} \sum_{y \in W_Y} f_{X,Y} (x',y)$ \\
+$F_Y(y) = \sum_{y' ≤ y} f_Y(y') = \sum_{y' ≤ y} \sum_{x \in W_X} f_{X,Y} (x,y')$
+
+\subsubsection*{Unabhängigkeit}
+Seien $X_1, \dots, X_n$ Zufallsvariablen. \\
+$X_1, \dots, X_n$ sind unabhängig, falls für alle \\
+$(x_1, \dots, x_n) \in W_{X_1} \times \dots \times W_{X_n}$ gilt: \\
+$\Pr[X_1 = x_1, \dots, X_n = x_n] = \Pr[X_1 = x_1] ⋅ \dots ⋅ \Pr[X_n = x_n]$ \\
+bzw. \\
+$F_{X_1, \dots, X_n} (x_1, \dots, x_n) = F_{X_1}(x_1) ⋅ \dots ⋅ F_{X_n}(x_n)$ \\
+
+Seien $X_1, \dots, X_n$ unabhängige Zufallsvariablen und $S_1, \dots, S_n$ beliebige Mengen mit $S_i \subseteq W_{X_i} \implies$ \\
+Die Ereignisse $``X_1 \in S_1", \dots, ``X_n \in S_n"$ sind unabhängig. \\
+
+Seien $f_1, \dots, f_n$ reellwertige Funktionen $(f_i : \mathbb{R} → \mathbb{R})$: \\
+Sind $X_1, \dots, X_n$ unabhängig $\implies f_1(X_1), \dots, f_n(X_n)$ sind unabhängig
+
+\subsubsection*{Zusammengesetzte Zufallsvariablen}
+Seien $X$ und $Y$ unabhängige Zufallsvariablen und $Z := X + Y \implies$ \\
+$f_Z(z) = \sum_{x \in W_X} f_X(x) ⋅ f_Y(z-x)$
+
+\subsubsection*{Linearität des Erwartungswerts}
+Seien $X_1, \dots, X_n$ Zufallsvariablen und $X := a_1 X_1 + \dots + a_n X_n$ mit $a_1, \dots, a_n \in \mathbb{R} \implies$ \\
+$\mathbb{E}[X] = a_1 \mathbb{E}[X_1] + \dots + a_n \mathbb{E}[X_n]$
+
+\subsubsection*{Multiplikativität des Erwartungswerts}
+Seien $X_1, \dots, X_n$ unabhängige Zufallsvariablen $\implies$ \\
+$\mathbb{E}[X_1 ⋅ \dots ⋅ X_n] = \mathbb{E}[X_1] ⋅ \dots ⋅ \mathbb{E}[X_n]$
+
+\subsubsection*{Indikatorvariable}
+Sei $A$ ein Ereignis. Die Zufallsvariable \\
+$I_A := \begin{cases}
+	1 & $falls $A$ eintritt$ \\
+	0 & $sonst$
+\end{cases}$ \\
+heißt Indikatorvariable des Ereignisses $A$ \\
+
+$\mathbb{E}[I_A] = \Pr[A]$ \\
+$\mathbb{E}[I_{A_1} ⋅ \dots ⋅ I_{A_n}] = \Pr[A_1 \cap \dots \cap A_n]$
+
+\subsubsection*{Varianz}
+Seien $X_1, \dots, X_n$ unabh. Zufallsvariablen und $X := X_1 + \dots + X_n$ \\
+$\implies$ $\Var[X] = \Var[X_1] + \dots + \Var[X_n]$
+
+\subsection*{Wichtige diskrete Verteilungen}
+
+\subsubsection*{Bernoulli-Verteilung}
+Sei $X$ eine Zufallsvariable mit $W_X = \{0,1\}$ \\
+und Dichte $f_X(x) = \begin{cases}
+	p & $für $x = 1 \\
+	1-p & $für $x = 0 
+\end{cases} \\
+\implies$ X ist Bernoulli-verteilt \\
+$p$ ist Erfolgswahrscheinlichkeit \\
+
+$\mathbb{E}[X] = p$, $\Var[X] = pq$, $q := 1-p$
+
+\subsubsection*{Binomialverteilung}
+Sei $X := X_1 + \dots + X_n$ eine Summe aus $n$ unabhängigen, Bernoulli-verteilten Zufallsvariablen mit gleicher Erfolgswahrscheinlichkeit $p$ \\
+$\implies$ $X$ ist binomialverteilt mit den Parametern $n$ und $p$: \\
+$X \sim \text{Bin}(n,p)$ \\
+
+$W_X = \{0, \dots, n\}$ \\
+$f_X(x) := b(x;n,p) = \binom{n}{x} p^xq^{n-x}$, $q := 1-p$ \\
+
+$\mathbb{E}[X] = np$, $\Var[X] = npq$ \\
+
+Seien $X \sim \text{Bin}(n_x,p)$ und $Y \sim \text{Bin}(n_y,p)$ unabh. Zufallsvariablen \\
+und $Z := X + Y$ $\implies$ \\
+$Z \sim \text{Bin}(n_x + n_y,p)$
+
+\subsubsection*{Geometrische Verteilung}
+Man betrachte ein Experiment, das so lange wiederholt wird, bis Erfolg eintritt. Gelingt ein einzelner Versuch mit Wahrscheinlichkeit $p$, so ist die Anzahl der Versuche bis zum Erfolg geometrisch verteilt. \\
+
+Sei $X$ eine geometrisch verteilte Zufallsvariable mit Parameter (Erfolgswahrscheinlichkeit) $p \in (0,1]$ und $q := 1 - p \implies$ \\
+$f_X(i) = pq^{i-1}$ für $i \in \mathbb{N}$ \\
+$\mathbb{E}[X] = \frac{1}{p}$,~~~ $\Var[X] = \frac{q}{p^2}$ \\
+
+\subsubsection*{Negative Binomialverteilung}
+Seien $X_1, \dots, X_n$ unabhänige, geometrisch verteilte Zufallsvariablen mit Parameter $p$ und $Z := X_1 + \dots + X_n$ (Z ≡ Anzahl der Versuche bis zum $n$-ten erfolgreichen Experiment)$ \implies$ \\
+Z ist negativ binomialverteil mit Ordnung $n$ und \\
+$f_Z(z) = \binom{z - 1}{n - 1} ⋅ p^n(1-p)^{z-n}$
+
+\subsubsection*{Coupon-Collector-Problem}
+%TODO
+
+\subsubsection*{Poisson-Verteilung}
+Wird verwendet um die Anzahl von Ereignissen zu modellieren, welche mit konstanter Rate und unabhängig voneinander in einem Zeitintervall auftreten. \\
+$X \sim \text{Po}(\lambda)$ \\
+
+Sei $X$ eine Poisson-verteilte Zufallsvariable mit $\lambda ≥ 0$ $\implies$ \\
+$W_X = \mathbb{N}_0$ \\
+$f_X(i) = \frac{e^{-\lambda}\lambda^i}{i!}$ für $i \in \mathbb{N}_0$ \\
+
+$\mathbb{E}[X] = \lambda$, $\Var[X] = \lambda$
+
+\subsubsection*{Poisson-Verteilung als Grenzwert der Binomialverteilung}
+$\liminfty b(k; n, \lambda/n) = e^{-\lambda} ⋅ \frac{\lambda^k}{k!}$ \\
+$X \sim \text{Bin}(n, \lambda/n) ~\underrightarrow{n → ∞}~ X \sim \text{Po}(\lambda)$ \\
+
+Faustregel: $n ≥ 30$ und $p ≤ 0.05$
+
+\paragraph*{Gesetz seltener Ereignisse}
+Ist $n >> \lambda \implies$ \
+$X \sim \text{Bin}(n, \lambda/n) \approx X \sim \text{Po}(\lambda)$, \\
+falls folgende Voraussetzungen erfüllt sind:
+\begin{itemize}
+	\item Die Ereignisse treten nie zur gleichen Zeit auf
+	\item Die Wahrscheinlichkeit, dass ein Ereignis in einem (kleinen) Zeitintervall auftritt, ist proportional zur Länge des Intervalls
+	\item Die Anzahl der Ereignisse in einem festen Zeitintervall hängt nur von dessen Länge ab, nicht aber von der Lage auf der Zeitachse
+	\item Wenn man zwei disjunkte Zeitintervalle betrachtet, so sind die Anzahlen der Ereignisse in diesen Zeiträumen voneinander unabhängig
+\end{itemize}
+
+\subsubsection*{Summe von Poisson-verteilten Zufallsvariablen}
+Seien $X,Y$ unabhängige Zufallsvariablen mit $X \sim \text{Po}(\lambda)$ und $Y \sim \text{Po}(\mu) \implies$ \\
+$Z := X + Y \sim \text{Po}(\lambda + \mu)$
+
+\subsection*{Abschätzen von Wahrscheinlichkeiten}
+\subsubsection*{Markov-Ungleichung}
+Sei $X$ eine Zufallsvariable, die nur nicht-negative Werte annimmt und $t \in \mathbb{R}^+$ \\
+$\implies$ $\Pr[X ≥ t] ≤ \frac{\mathbb{E}[X]}{t} \iff \Pr[X ≥ t ⋅ \mathbb{E}[X]] ≤ \frac{1}{t}$
+
+\subsubsection*{Chebyshev-Ungleichung}
+Sei $X$ eine Zufallsvariable und $t \in \mathbb{R}^+$ $\implies$ \\
+$\Pr[|X - \mathbb{E}[X]| ≥ t] ≤ \frac{\Var[X]}{t^2}$ \\
+$\iff \Pr[|X-\mathbb{E}[X]| ≥ t \sqrt{\Var[X]}] ≤ \frac{1}{t^2}$ \\
+
+Anw: $\Pr[X ≥ k] = \Pr[X - \mathbb{E}[X] ≥ k - \mathbb{E}[X]] ≤ \Pr[|X - \mathbb{E}[X] ≥ k - \mathbb{E}[X]] ≤ \frac{\Var[X]}{(k-\mathbb{E}[X])^2}$
+
+\subsubsection*{Gesetz der großen Zahlen}
+Sei $X$ eine Zufallsvariable und $\varepsilon, \delta > 0$ beliebig aber fest \\
+Sind $X_1, \dots, X_n$ unabhängige Zufallsvariablen mit derselben Verteilung wie $X$ und $Z := \frac{X_1 + \dots + X_n}{n}$ \\
+Für alle $n ≥ \frac{\Var[X]}{\varepsilon \delta^2}$ gilt: \\
+$\Pr[|Z - \mathbb{E}[X]| ≥ \delta] ≤ \varepsilon$
+
+\subsubsection*{Chernoff-Schranken}
+Seien $X_1, \dots, X_n$ unabhängige Bernoulli-verteilte Zufallsvariablen (nicht zwingend gleichverteilt) mit Erfolgswahrscheinlichkeit $p_i$ und $X := \sum_{i=1}^n X_i$ und $\mu := \mathbb{E}[X] = \sum_{i=1}^n p_i$ und jedes $\delta > 0$ $\implies$ \\
+\renewcommand{\arraystretch}{2}
+\begin{tabular}{l@{~~für alle }l}
+	$\Pr[X ≥ (1 + \delta) \mu] ≤ \bigg(\frac{e^\delta}{(1 + \delta)^{1 + \delta}}\bigg)^\mu$ & $\delta > 0$ \\
+	$\Pr[X ≤ (1 - \delta)\mu] ≤ \bigg(\frac{e^{-\delta}}{(1 - \delta)^{1 - \delta}}\bigg)^\mu$ & $0 < \delta < 1$ \\
+	$\Pr[X ≥ (1 + \delta)\mu] ≤ e^{\frac{-\mu\delta^2}{3}}$ & $0 < \delta ≤ 1$ \\	
+	$\Pr[X ≤ (1 - \delta)\mu] ≤ e^{\frac{-\mu\delta^2}{2}}$ & $0 < \delta ≤ 1$ \\
+	$\Pr[|X - \mu| ≥ \delta\mu] ≤ 2e^{\frac{-\mu\delta^2}{3}}$ & $0 < \delta ≤ 1$ \\
+	\multicolumn{2}{l}{$\Pr[X ≥ (1 + \delta)\mu] ≤ \Big(\frac{e}{1 + \delta}\Big)^{(1 + \delta)\mu}$} \\
+	\multicolumn{2}{l}{$\Pr[X ≥ t] ≤ 2^{-t}$} für $t ≥ 2e\mu$ \\
+\end{tabular}
+\renewcommand{\arraystretch}{1}
+
+\paragraph*{Lemma}
+für $0 ≤ \delta < 1$ gilt \\
+$(1 - \delta)^{1-\delta} ≥ e^{-\delta + \delta^2/2}$ und $(1 + \delta)^{1 + \delta} ≥ e^{\delta + \delta^2/3}$
+
+\subsection*{Erzeugende Funktionen}
+Eine wahrscheinlichkeitserzeugende Funktion ist die (gewöhnliche) erzeugende Funktion der Folge $(f_i)_{i \in \mathbb{N}_0}$ mit $f_i := \Pr[X = i]$ \\
+
+Für eine Zufallsvariable $X$ mit $W_X \subseteq \mathbb{N}_0$ ist die (wahrscheinlichkeits-)erzeugende Funktion definiert durch \\
+$G_X(s) := \sum_{k=0}^∞ \Pr[X = k] ⋅ s^k = \mathbb{E}[x^X]$ \\
+
+Sei $Y := X + t$ mit $t \in \mathbb{N}_0$ $\implies$ \\
+$G_Y(s) = s^t ⋅ G_X(s)$ \\
+
+$G^{(i)}_X(0) = \Pr[X = i] ⋅ i!$ \\
+$\mathbb{E}[X] = G'_X(1)$ \\
+$\Var[X] = G''_X(1) + G'_X(1) - (G'_X(1))^2$
+
+\subsubsection*{Eindeutigkeit der wahrscheinlichkeitserzeugenden Funktion}
+Die Dichte und die Verteilung einer Zufallsvariable $X$ mit $W_X \subseteq \mathbb{N}$ sind durch ihre wahrscheinlichkeitserzeugende Funktion eindeutig bestimmt
+
+\subsubsection*{Bernoulli-Verteilung}
+Sei $X$ eine Bernoulli-verteilte Zufallsvariable mit Erfolgswahrscheinlichkeit $p$ $\implies$ \\
+$G_X(s) = 1 - p + ps$
+
+\subsubsection*{Gleichverteilung auf \{0, ..., n\}}
+Sei $X$ auf $\{0, \dots, n\}$ gleichverteilt, d.h. für $0 ≤ k ≤ n$ ist $\Pr[X = k] = \frac{1}{n + 1}$ $\implies$ \\
+$G_X(s) = \sum_{k=0}^n \frac{1}{n + 1} ⋅ s^k = \frac{s^{n + 1} - 1}{(n + 1)(s - 1)}$
+
+\subsubsection*{Binomialverteilung}
+Sei $X \sim \text{Bin}(n,p)$ $\implies$ \\
+$G_X(s) = (1 - p + ps)^n$ \\
+
+$G'_X(s) = n ⋅ (1 - p + ps)^{n - 1} ⋅ p$
+
+\subsubsection*{Geometrische Verteilung}
+Sei $X$ eine geometrisch verteilte Zufallsvariable mit Erfolgswahrscheinlichkeit $p$ $\implies$ \\
+$G_X(s) = \frac{ps}{1 - (1 - p)s}$
+
+\subsubsection*{Poisson-Verteilung}
+Sei $X \sim \text{Po}(\lambda)$ $\implies$ \\
+$G_X(s) = e^{\lambda(s - 1)}$
+
+\subsubsection*{Momenterzeugende Funktionen}
+Sei $X$ eine Zufallsvariable. Die zugehörige momenterzeugende Funktion ist \\
+$M_X(s) := \mathbb{E}[e^{Xs}] = \sum_{i=0}^∞ \frac{\mathbb{E}[X^i]}{i!} ⋅ s^i$ \\
+
+Sei $W_X \subseteq \mathbb{N}_0$ $\implies$ \\
+$M_X(s) = G_X(e^s)$
+
+\subsubsection*{Erzeugende Funktion einer Summe}
+Seien $X_1, \dots, X_n$ unabhängige Zufallsvariablen und $Z := X_1 + \dots + X_n$ $\implies$ \\
+$G_Z(s) = G_{X_1}(s) ⋅ \dots ⋅ G_{X_n}(s)$ und\\
+$M_Z(s) = M_{X_1}(s) ⋅ \dots ⋅ M_{X_n}(s)$
+
+\subsubsection*{Zufällige Summen}
+Seien $X_1, X_2, \dots$ unabhängige und identisch verteilte Zufallsvariablen mit der wahrscheinlichkeitserzeugenden Funktion $G_X(s)$ und $N$ eine unabhängige Zufallsvariable mit der wahrscheinlichkeitserzeugenden Funktion $G_N(s)$ und $Z := X_1 + \dots + X_N$ $\implies$ \\
+$G_Z(s) = G_N(G_X(s))$
+
+\newpage
+
+\section*{Kontinuierliche Wahrscheinlichkeitsräume}
+\subsection*{Grundlagen}
+\subsubsection*{Ereignis}
+Eine Menge $A \subseteq \mathbb{R}$, die durch Vereinigung $A = \bigcup_k I_k$ abzählbar vieler paarweise disjunkter Intervalle beliebiger Art (offen, geschlossen, halboffen, einseitig unendlich) gebildet werden kann, heißt Ereignis. \\
+Ein Ereignis $A$ tritt ein, wenn X einen Wert aus A annimmt. \\
+$\Pr[A] = \int_A f_X(x) dx = \sum_k \int_{I_k} f_X(x) dx$
+
+\subsection*{Kolmogorov-Axiome und $\sigma$-Algebren}
+
+\subsubsection*{$\sigma$-Algebren}
+Sei $\Omega$ eine Menge. Eine Menge $\mathcal{A} \subseteq \mathcal{P}(\Omega)$ heißt $\sigma$-Algebra über $\Omega$, falls gilt
+\begin{itemize}
+	\item $\Omega \in \mathcal{A}$
+	\item Wenn $A \in \mathcal{A}$, dann folgt $\bar{A} \in \mathcal{A}$
+	\item Für $n \in \mathbb{N}$ sei $A_n \in \mathcal{A}$. Dann gilt auch $\bigcup_{n = 1}^∞ A_n \in \mathcal{A}$
+\end{itemize} 
+~ \\
+Für jede (endliche) Menge $\Omega$ stellt die Menge $\mathcal{P}(\Omega)$ eine $\sigma$-Algebra dar. \\
+
+Für $\Omega = \mathbb{R}$ ist die Klasse der Borel'schen Mengen, die aus allen Mengen $A \subseteq \mathbb{R}$ besteht, welche sich durch abzählbare Vereinigungen und Schnitte von Intervallen (offen, halboffen oder geschlossen) darstellen lassen, eine $\sigma$-Algebra
+
+\subsubsection*{Kolmogorov-Axiome}
+Sei $\Omega$ eine beliebige Menge und $\mathcal{A}$ eine $\sigma$-Algebra über $\Omega$. Eine Abbildung $\Pr[.] : \mathcal{A} → [0,1]$ heißt Wahrscheinlichkeitsmaß auf $\mathcal{A}$, falls
+\begin{itemize}
+	\item $\Pr[\Omega] = 1$
+	\item $A_1, A_2, \dots$ seien paarweise disjunkte Ereignisse $\implies$ \\
+		$\Pr\Bigg[\bigcup_{i=1}^∞ A_i\Bigg] = \sum_{i=1}^∞ \Pr[A_i]$
+\end{itemize}
+
+Für ein Ereignis $A \in \mathcal{A}$ heißt $\Pr[A]$ Wahrscheinlichkeit von $A$. Ein Wahrscheinlichkeitsraum ist definiert durch das Tupel $(\Omega, \mathcal{A}, \Pr)$ \\
+
+Sei $(\Omega, \mathcal{A}, \Pr)$ ein Wahrscheinlichkeitsraum und $A, B, A_1, A_2, \dots$ Ereignisse $\implies$
+\begin{itemize}
+	\item $\Pr[∅] = 0, \Pr[\Omega] = 1$
+	\item $0 ≤ \Pr[A] ≤ 1$
+	\item $\Pr[\bar{A}] = 1 - \Pr[A]$
+	\item Wenn $A \subseteq B$, so folgt $\Pr[A] ≤ \Pr[B]$
+\end{itemize}
+
+\subsubsection*{Lebesgue-Integrale}
+\paragraph*{messbare Funktionen}
+Eine Funktion $f : \mathbb{R} → \mathbb{R}$ heißt messbar, falls das Urbild jeder Borel'schen Menge ebenfalls eine Borel'sche Menge ist. \\
+
+Für jede Borel'sche Menge $A$ ist die zugehörige Indikatorfunktion messbar. \\
+Jede stetige Funktion ist messbar. \\
+Summen und Produkte von messbaren Funktionen sind wiederum messbar. \\
+\\
+
+Jeder messbaren Funktion kann man ein Integral, das so genannte Lebesgue-Integral $\int f d \lambda$ zuordnen \\
+
+Sei $f : \mathbb{R} → \mathbb{R}_0^+$ eine messbare Funktion $\implies$ \\
+$\Pr : A → \int f ⋅ I_A d \lambda$ ist eine Abbildung auf den Borel'schen Mengen, die die zweite Eigenschaft der Kolmogorov-Axiome erfüllt \\
+Gilt zusätzlich $\Pr[\mathbb{R}] = 1$ $\implies$ \\
+$f$ definiert auf natürliche Weise einen Wahrscheinlichkeitsraum $(\Omega, \mathcal{A}, \Pr)$ mit $\Omega = \mathbb{R}$ und $\mathcal{A}$ ist die Menge der Borel'schen Mengen.
+
+
+\subsection*{Kontinuierliche Zufallsvariablen}
+\subsubsection*{Dichtefunktion}
+Sei $X$ eine kontinuierliche oder auch stetige Zufallsvariable $\implies$ \\
+Dichtefunktion: $f_X : \mathbb{R} → \mathbb{R}_0^+$ \\
+
+$\int_{-∞}^{∞} f_X(x) dx = 1$
+
+\subsubsection*{Verteilungsfunktion}
+$F_X(x) := \Pr[X ≤ x] = \Pr[\{t \in \mathbb{R} | t ≤ x \}] = \int_{-∞}^x f_X(t) dt$ \\
+$F_X$ ist monoton steigend \\
+$F_X$ ist stetig \\
+$\lim_{x → -∞} F_X(x) = 0$ und $\lim_{x → ∞} F_X(x) = 1$ \\
+
+Für jede differenzierbare Funktion $F$, welche die zuvor genannten Eigenschaften erfüllt $\implies$ \\
+$f(x) = F'(x)$ und $\Pr[a < X ≤ b] = F_X(b) - F_X(a)$ \\
+
+Für $a < X ≤ b$, $a ≤ X ≤ b$, $a ≤ X < b$, $a < X < b$ gilt: \\
+$\int_{[a,b]} f(t) dt = \int_{]a,b]} f(t) dt = \int_{[a,b[} f(t) dt = \int_{]a,b[} f(t) dt$
+
+\subsubsection*{Kontinuierliche Zufallsvariablen als Grenzwerte diskreter Zufallsvariablen}
+Sei $X$ eine kontinuierliche Zufallsvariable \\
+Defniert man für ein festes $\delta > 0$ \\ 
+$X_\delta = n\delta \iff X \in [n\delta, (n+1)\delta[ \text{ für } n \in \mathbb{Z}$ $\implies$\\
+$\Pr[X_\delta = n\delta] = F_X((n + 1)\delta) - F_X(n\delta)$ \\
+
+Für $\delta → 0$ nähert sich die Verteilung von $X_\delta$ der Verteilung von $X$ imm mehr an 
+
+\subsubsection*{Erwartungswert}
+Sei $X$ eine Zufallvariable $\implies$ \\
+$\mathbb{E}[X] = \int_{-∞}^∞ t ⋅ f_X(t) dt$, \\
+sofern das Integral $\int_{-∞}^∞ |t| ⋅ f_X(t) dt$ existiert \\
+
+Sei $X, Y$ Zufallsvariablen mit $Y := g(X)$ $\implies$ \\
+$\mathbb{E}[Y] = \int_{-∞}^∞ g(t) ⋅ f_X(t) dt$
+
+\subsubsection*{Varianz}
+Sei $X$ eine Zufallsvariable $\implies$ \\
+$\Var[X] = \mathbb{E}[(X - \mathbb{E}[X])^2] = \int_{-∞}^∞ (t - \mathbb{E}[X])^2 ⋅ f_X(t) dt$, \\
+sofern $\mathbb{E}[(X - \mathbb{E}[X])^2]$ existiert
+
+\subsection*{Wichtige stetige Verteilungen}
+\subsubsection*{Gleichverteilung}
+$f(x) = \begin{cases}
+	\frac{1}{b - a} & $für $x \in [a,b] \\
+	0 & $sonst$
+\end{cases}$ \\
+
+$F(x) = \int_{-∞}^x f(t) dt = \begin{cases}
+	0 & $für $x < a \\
+	\frac{x - a}{b - a} & $für $a ≤ x ≤ b \\
+	1 & $für $x > b
+\end{cases}$ \\
+
+$\mathbb{E}[X] = \frac{a + b}{2}$, $\Var[X] = \frac{(a-b)^2}{12}$
+
+\subsubsection*{Normalverteilung}
+Sei $X$ eine Zufallsvariable mit $W_X = \mathbb{R}$ und Parametern $\mu \in \mathbb{R}$ und $\sigma \in \mathbb{R}^+$
+$X$ ist normalverteilt, falls \\
+$f(x) = \frac{1}{\sqrt{2\pi}\sigma} ⋅ \exp\Big(-\frac{(x - \mu)^2}{2\sigma^2}\Big) = \varphi(x; \mu, \sigma)$ \\
+
+$F(x) = \frac{1}{\sqrt{2\pi}\sigma} ⋅ \int_{-∞}^x \exp\Big(-\frac{(t - \mu)^2}{2 \sigma^2}\Big) dt =: \Phi(x; \mu, \sigma)$ \\
+
+$\mathbb{E}[X] = \mu$, $\Var[X] = \sigma^2$ \\
+
+$X \sim \mathcal{N}(\mu,\sigma^2)$ \\
+
+\paragraph*{Lineare Tranformation der Normalverteilung}
+Sei $X \sim \mathcal{N}(\mu, \sigma^2)$ und $Y = aX + b$ mit beliebigen $a \in \mathbb{R} \textbackslash {0}$ und $b \in \mathbb{R}$ $\implies$ \\
+$Y \sim \mathcal{N}(a\mu + b, a^2\sigma^2)$ \\
+
+Sei $Y := \frac{X - \mu}{\sigma}$ $\implies$ $Y \sim \mathcal{N}(0,1)$. Y heißt auch normiert.
+
+\paragraph*{Additivität der Normalverteilung}
+Seien $X_1, \dots, X_n$ unabhängige und normalverteilte Zufallsvariablen mit Parameter $\mu_i, \sigma_i (1 ≤ i ≤ n)$ und $Z := a_1X_1 + \dots + a_nX_n$ $\implies$ \\
+$Z$ ist normalverteilt mit Erwartungswert $\mu = a_1\mu_1 + \dots + a_n\mu_n$ und Varianz $\sigma^2 = a_1^2 \sigma_1^2 + \dots + a_n^2 \sigma_n^2$
+
+\subsubsection*{Standardnormalverteilung}
+$X$ ist standardnormalverteilt, falls
+$X \sim \mathcal{N}(0,1)$ \\
+Die zugehörige Dichte $\varphi(x;0,1)$ kürzen wir durch $\varphi(x)$ ab
+
+$\mathbb{E}[X] = 0$, $\Var[X] = 1$
+
+\subsubsection*{Exponentialverteilung}
+Die Exponentialverteilung ist das kontinuierliche Analogon zur geometrischen Verteilung. Sie ist gedächtnislos und spielt vor allem bei der Modellierung von Wartezeiten eine große Rolle. \\
+
+Sei $X$ eine Zufallsvariable mit Parameter $\lambda, \lambda > 0$ \\
+$X$ ist exponentialverteilt, falls \\
+$f(x) = \begin{cases}
+	\lambda ⋅ e^{-\lambda x} & $falls $x ≥ 0 \\
+	0 & $sonst$
+\end{cases}$ \\
+
+$F(x) = \begin{cases}
+	1 - e^{-\lambda x} & $für $x ≥ 0 \\
+	0 & $sonst$
+\end{cases}$ \\
+
+$\mathbb{E}[X] = \frac 1 \lambda$, $\Var[X] = \frac{1}{\lambda^2}$
+
+\paragraph*{Eigenschaften der Exponentialverteilung}
+Sei $X$ exponentialverteilt mit Parameter $\lambda$ und $Y := aX$ mit $a > 0$ \\ 
+$\implies$ $Y$ ist exponentialverteilt mit Parameter $\lambda/a$
+
+\paragraph*{Gedächtnislosigkeit}
+Eine (positive) kontinuierliche Zufallsvariable $X$ mit $W_X = \mathbb{R}^+$ ist genau dann exponentialverteilt, wenn für alle $x,y > 0$ gilt, dass \\
+$\Pr[X > x + y | X > y] = \Pr[X > x]$
+
+\paragraph*{Anwendung bei Zerfallsraten}
+$\mathbb{E}[X] ≡ $ erwartete Zeit bis Zerfall \\
+$\lambda = \frac{1}{\mathbb{E}[X]}$
+
+\subsubsection*{Exponentialverteilung als Grenzwert der geometrischen Verteilung}
+Sei $X_n$ eine Folge geometrisch verteilter Zufallsvariablen mit Parameter $p_n = \lambda/n$ \\
+Sei $Y_n := \frac{1}{n}X_n$ $\implies$ Die Folge $Y_n$ geht für $n → ∞$ in eine exponentialverteilte Zufallsvariable mit Parameter $\lambda$ über.
+
+\subsection*{Mehrere kontinuierliche Zufallsvariablen}
+\subsubsection*{Mehrdimensionale Dichten}
+Seien $X, Y$ kontinuierliche Zufallsvariablen $\implies$ \\
+Die Dichte ist beschrieben durch: $f_{X,Y} : \mathbb{R}^2 → \mathbb{R}_0^+$ mit \\
+
+$\int_{-∞}^∞ \int_{-∞}^∞ f_{X,Y} (x,y) dx dy = 1$ \\
+
+Für ein Ereignis $A \subseteq \mathbb{R}^2$ gilt: \\
+$\Pr[A] = \int_A f_{X,Y}(x,y) dx dy$
+
+\subsubsection*{Mehrdimensionale Verteilung}
+Sei $f_{X,Y}$ die gemeinsame Dichte der Zufallsvariablen $X, Y$ $\implies$ \\
+Die gemeinsame Verteilung ist definiert als: $F_{X,Y} : \mathbb{R}^2 → [0,1]$ \\
+$F_{X,Y}(x,y) = \Pr[X ≤ x, Y ≤ y] = \int_{-∞}^y \int_{-∞}^x f_{X,Y} (u, v) du dv$
+
+\subsubsection*{Randdichte}
+Sei $f_{X,Y}$ die gemeinsame Dichte der Zufallsvariablen $X$ und $Y$. Die Randdichte von $X$ ist: \\
+$f_X(x) = \int_{-∞}^∞ f_{X,Y} (x, v) dv$
+
+\subsubsection*{Randverteilung}
+Sei $f_{X,Y}$ die gemeinsame Dichte der Zufallsvariablen $X$ und $Y$. Die Randverteilung von $X$ ist: \\
+$F_X(x) = \Pr[X ≤ x] = \int_{-∞}^x \Bigg[\int_{-∞}^∞ f_{X,Y} (u, v) dv \Bigg] du$
+
+\subsubsection*{Unabhängigkeit}
+Seien $X_1, \dots, X_n$ Zufallsvariablen $\implies$ \\
+$X_1, \dots, X_n$ sind genau dann unabhängig, wenn \\
+$F_{X_1, \dots, X_n}(x_1, \dots, x_n) = F_{X_1}(x_1) ⋅ \dots ⋅ F_{X_n}(x_n)$ bzw. \\
+$f_{X_1, \dots, X_n}(x_1, \dots, x_n) = f_{X_1}(x_1) ⋅ \dots ⋅ f_{X_n}(x_n)$ bzw. \\
+
+\subsubsection*{Warteprobleme mit der Exponentialverteilung - Warten auf mehrere Ereignisse}
+Seien $X_1, \dots, X_n$ unabhängige und exponentialverteilte Zufallsvariablen mit den Parametern $\lambda_1, \dots, \lambda_n$ $\implies$ \\
+$X := min\{X_1, \dots, X_n\}$ ist exponentialverteilt mit dem Parameter $\lambda_1 + \dots + \lambda_n$ \\
+
+Erläuterung: \\
+Wartet man auf das Eintreffen eines Ereignisses aus mehreren unabhängigen Ereignissen, so addieren sich die Raten.
+
+\paragraph*{Poisson-Prozess}
+Seien $T_1, T_2, \dots$ unabhängige exponentialverteilte Zufallsvariablen mit Parameter $\lambda$ und sei $X(t) := max\{n \in \mathbb{N} | T_1 + \dots + T_n ≤ t\}$ für $t > 0$ $\implies$ $X(t)$ ist Poisson-verteilt mit Parameter $t\lambda$ \\
+
+Erläuterung:
+Wenn man Ereignisse zählt, deren zeitlicher Abstand exonentialverteilt ist, so ist die Anzahl dieser Ereignisse in einer festen Zeitspanne Poisson-verteilt.
+
+\subsubsection*{Summen von Zufallsvariablen}
+Seien $X$ und $Y$ unahängige kontinuierliche Zufallsvariablen und $Z := X + Y$ $\implies$ \\
+$f_Z(z) = \int_{-∞}^∞ f_X(x) ⋅ f_Y(z - x) dx$
+
+\subsection*{Momenterzeugende Funktionen für kontinuierliche Zufallsvariablen}
+Sei $X$ eine Zufallsvariable. Die zugehörige momenterzeugede Funktion ist \\
+$M_X(s) = \mathbb{E}[e^{Xs}]$
+
+\subsubsection*{Gleichverteilung}
+Sei $U$ eine gleichverteilte Zufallsvariable auf $[a,b]$ $\implies$ \\
+$M_U (t) = \mathbb{E}[e^{tX}] = \frac{e^{tb} - e^{ta}}{t(b-a)}$
+
+\subsubsection*{Standardnormalverteilung}
+Sei $N \sim \mathcal{N}(0,1)$ $\implies$ \\
+$M_N(t) = e^{\frac{t^2}{2}}$
+
+\subsubsection*{Normalverteilung}
+Sei $Y \sim \mathcal{N}(\mu, \sigma^2)$ $\implies$ \\
+$M_Y(t) = e^{t\mu + (t\sigma)^2/2}$
+
+\subsection*{Zentraler Grenzwertsatz}
+Seien $X_1, \dots, X_n$ unabhängige und gleich verteilte Zufallsvariablen mit Erwartungswert $\mu$ und Varianz $\sigma^2$ ($\sigma^2 > 0$) für $X_i$. Und sei $Y_n := X_1 + \dots + X_n$ für $n ≥ 1$ $\implies$ \\
+$Z_n := \frac{Y_n - n\mu}{\sigma \sqrt{n}}$ ist asymptotisch standardnormalverteilt, \\
+also $Z_n \sim \mathcal{N}(0,1)$ für $n → ∞$ \\
+Die Verteilung von $Z_n$ konvergiert gegen die Standardnormalverteilung für $n → ∞$ \\
+
+Aussage: \\
+Wenn eine Zufallsgröße durch lineare Kombination vieler unabhängiger identisch verteilter Zufallsgrößen entsteht, so erhält man näherungsweise eine Normalverteilung.
+
+\subsubsection*{Grenzwertsatz von de Moivre}
+Seien $X_1, \dots, X_n$ unabhängige Bernoulli-verteilte Zufallsvariablen mit gleicher Erfolgswahrscheinlichkeit p und $H_n := X_1 + \dots + X_n$ für $n ≥ 1$ $\implies$ \\
+$H_n^* := \frac{H_n - np}{\sqrt{np(1-p)}}$ konvergiert für $n → ∞$ gegen die Standardnormalverteilung
+
+\subsubsection*{Normalverteilung als Grenzwert der Binomialverteilung}
+Sei $H_n \sim \text{Bin}(n,p)$ eine binomialverteilte Zufallsvariable. $\implies$ \\
+$\frac{H_n}{n}$ konvergiert für $n → ∞$ gegen $\mathcal{N}\Big(p,\frac{p(1-p)}{n}\Big)$
+
+\subsubsection*{Verschiedene Approximationen der Binomialverteilung}
+Sei $H_n \sim \text{Bin(n,p)}$ mit Verteilungsfunktion $F_n$. Für $n → ∞$ gilt: \\
+$F_n(t) = \Pr[\frac{H_n}{n} ≤ \frac t n] → \Phi \Bigg(\frac{\frac{t}{n} - p}{\sqrt{\frac{p(1-p)}{n}}}\Bigg) = \Phi \Bigg(\frac{t - np}{\sqrt{p(1-p)n}}\Bigg)$ \\
+
+Faustregel: $np ≥ 5$ und $n(1-p) ≥ 5$
+
+\paragraph*{Stetigkeitskorrektur}
+Verwende $\Pr[X ≤ x] \approx \Phi \Bigg(\frac{x + 0.5 - np}{\sqrt{np(1-p)}}\Bigg)$ \\
+anstatt $\Pr[X ≤ x] \approx \Phi \Bigg(\frac{x - np}{\sqrt{np(1-p)}}\Bigg)$
+
+\newpage
+\section*{Induktive Statistik}
+Ziel: \\
+Aus gemessenen Zufallsgrößen auf die zugrunde liegenden Gesetzmäßigkeiten schließen.
+
+\subsection*{Schätzvariablen}
+Man führe $n$ Messungen durch. Jede Messung wird durch eine Zufallsvariable $X_i$ dargestellt. $\implies$ \\
+Die $n$ Messungen heißen Stichproben, und die Variablen $X_i$ nennt man Stichprobenvariablen.
+
+\subsubsection*{Grundprinzip statistischer Verfahren}
+Wenn man ein Experiment genügen oft wiederholt, so nähert sich der Durchschnitt der Versuchsergebnisse immer mehr dem Verhalten an, das man im Mittel erwarten würde.
+Auf diesem Grundprinzip beruhen alle statistischen Verfahren.
+
+\subsubsection*{arithmetische Mittel}
+Seien $X_i$ Zufallsvariablen. Das arithmetische Mittel $\bar{X}$ ist: \\
+$\bar X := \frac 1 n \sum_{i=1}^n X_i$ \\
+
+Ist $\bar X$ ein erwartungstreuer Schätzer, dann gilt: \\
+$\mathbb{E}[\bar{X}] = \frac 1 n \sum_{i=1}^n \mathbb{E}[X_i] = \frac 1 n \sum_{i=1}^n \mathbb{E}[X] = \mathbb{E}[X]$
+
+\subsubsection*{erwartungstreue Schätzvariable}
+Sei $X$ eine Zufallsvariable mit Dichte $f(x;\theta)$ \\
+Eine Schätzvariable/Schätzer für den Parameter $\theta$ der Dichte $X$ ist eine Zufallsvariable, die aus mehreren (meist unabhänigen und identisch verteilten) Stichprobenvariablen zusammengesetzt ist. \\
+Ein Schätzer $U$ heißt erwartungstreu, wenn gilt \\
+$\mathbb{E}[U] = \theta$ \\
+
+\paragraph*{Bias der Schätzvariablen}
+$\mathbb{E}[U-\theta]$ nennt man Bias der Schätzvariablen $U$. \\
+Bei erwartungstreuen Schätzvariablen ist der Bias gleich null.
+
+\subsubsection*{Mean squared error (MSE) - mittlere quadratische Abweichung}
+Sei $U$ eine Schätzvariable $\implies$ \\
+$MSE := \mathbb{E}[(U-\theta)^2]$ \\
+
+Sei $U$ erwartungstreu $\implies$ \\
+$MSE = \mathbb{E}[(U - \mathbb{E}[U])^2] = \Var[U]$
+
+\paragraph*{effizientere Schätzvariablen}
+Seien $A, B$ Schätzvariablen und MSE von $A$ kleiner, als die von $B$ $\implies$ \\
+$A$ ist effizienter als $B$
+
+\paragraph*{Konsistenz im quadratischen Mittel}
+Eine Schätzvariable heißt konsistent im quadratischen Mittel, wenn $MSE → 0$ für $n → ∞$ ($n$ sei der Umfang der Stichprobe) \\
+
+Bei jeder Verteilung mit endlicher Varianz folgt: Der Schätzer $\bar{X}$ ist konsistent.
+
+\paragraph*{schwache Konsistent}
+Sei $\bar{X} := \frac 1 n \sum_{i=1}^n X_i$ und $\varepsilon > 0$ beliebig, aber fest $\implies$ \\
+$\Pr[|\bar{X} - \theta| ≥ \varepsilon] = \Pr[|\bar{X} - \mathbb{E}[X]| ≥ \varepsilon] ≤ \frac{\Var[\bar{X}]}{\varepsilon^2} → 0$ für $n → ∞$ \\
+Also: Für genügend große $n$ liegen als die Werte von $\bar{X}$ beliebig nahe am gesuchten Wert $\theta = \mathbb{E}[X]$. Diese Eigenschaft nennt man auch schwache Konsistenz, da sie aus der Konsistenz im quadratischen Mittel folgt.
+
+\subsubsection*{Stichprobenmittel}
+Seien $X_1, \dots, X_n$ Stichproben und $\bar X$ ein erwartungstreuer Schätzer für den Erwartungswert $\implies$ \\
+$\bar X := \frac 1 n \sum_{i=1}^n X_i$ \\
+heißt Stichprobenmittel der Stichprobe $X_1, \dots, X_n$
+
+\subsubsection*{Stichprobenvarianz}
+Seien $X_1, \dots, X_n$ Stichproben und $\bar X$ und $S^2$ erwartungstreure Schätzer für den Erwartungswert bzw. die Varianz $\implies$ \\
+$S^2 := \frac{1}{n - 1} \sum_{i=1}^n (X_i - \bar{X})^2$ \\
+heißt Stichprobenvarianz der Stichprobe $X_1, \dots, X_n$
+
+\subsubsection*{Maximum-Likelihood-Prinzip (MLE) zur Konstruktion von Schätzvariablen}
+\paragraph*{Likelihood-Funktion}
+Sei $\vec{X} = (X_1, \dots, X_n)$, wobei $X_1, \dots, X_n$ unabhängige Kopien der Zufallsvariablen $X$ mit der Dichte $f(x;\theta) = \Pr{}_{\theta}[X = x]$ ist. Hierbei sei $\theta$ der gesuchte Parameter der Verteilung.
+Außerdem sei $\vec{x} = (x_1, \dots, x_n)$, wobei eine Stichprobe für jede Variable $X_i$ den Wert $x_i$ liefert. \\
+
+$L(\vec x; \theta) := \prod_{i=1}^n f(x_i; \theta) = \prod_{i = 1}^{n} \Pr{}_{\theta} [X_i = x_i] \\
+\stackrel{unabh.}{=} \Pr{}_{\theta} [X_1 = x_1, \dots, X_n = x_n]$ \\
+$\iff \ln(L(\vec x; \theta)) = \sum_{i=1}^n \ln(f(x_i; \theta))$ \\
+entspricht der Wahrscheinlichkeit, dass wir die Stichprobe $\vec{x}$ erhalten, wenn wir den Parameter mit dem Wert $\theta$ belegen. \\
+$L$ ist die Likelihood-Funktion der Stichprobe $\vec x$
+
+\paragraph*{Maximum-Likelihood-Schätzwert}
+Ein Schätzwert $\hat{\theta}$ für den Parameter einer Verteilung $f(x;\theta)$ heißt Maximum-Likelihood-Schätzwert (ML-Schätzwert) für eine Stichprobe $\vec x$, wenn gilt: \\
+$L(\vec x; \theta) ≤ L(\vec x; \hat{\theta}) ~ \forall \theta$ \\
+
+\paragraph*{Maximum-Likelihood-Funktion}
+Die Maximum-Likelihood-Funktion der Stichprobe $\vec x$ ist: \\
+$\hat{\theta}_{MLE} = \arg \max_{\theta} L(\vec{x}; \theta)$
+
+\subsection*{Konfidenzintervalle}
+\subsubsection*{Konfidenzniveau}
+Sei $\theta$ der gesuchte Parameter und $U_1, U_2$ zwei Schätzvariablen und es gilt: \\
+$\Pr[U_1 ≤ \theta ≤ U_2] ≥ 1 - \alpha$ \\
+$\implies$ Die Wahrscheinlichkeit $1 - \alpha$ heißt Konfidenzniveau. \\
+
+Wenn wir für eine konkrete Stichprobe die Schätzer $U_1$ und $U_2$ berechnen und davon ausgehen, dass $\theta \in [U_1, U_2]$ ist, so ziehen wir höchstens mit Wahrscheinlichkeit $\alpha$ einen falschen Schluss.
+
+\subsubsection*{Konfidenzintervall}
+Sei $\theta$ der gesuchte Parameter und $U_1, U_2$ zwei Schätzvariablen und es gilt: \\
+$\theta \in [U_1, U_2]$ \\
+$\implies$ $[U_1, U_2]$ heißt Konfidenzintervall. \\
+
+In vielen Fällen verwendet man nur eine Schätzvariable $U$ und konstruiert ein symmetrisches Konfidenzintervall:
+$[U - \delta, U + \delta]$
+
+\subsubsection*{$\gamma$-Quantil}
+Sei $X$ eine stetige Zufallsvariable mit Verteilung $F_X$. Eine Zahl $x_{\gamma}$ mit
+$F_X(x_{\gamma}) = \gamma$ \\
+heißt $\gamma$-Quantil von $X$ bzw. der Verteilung $F_X$ \\
+
+Für die Standardnormalverteilung bezeichnet $z_{\gamma}$ das $\gamma$-Quantil
+
+\subsection*{Testen von Hypothesen}
+%Sei $X$ eine Zufallsvariable mit \\
+%$\Pr[X = 1] = p$ und $\Pr[X = 0] = 1 - p$. \\
+%Durch einen Test soll überprüft werden, ob $p < \frac 1 3$ oder $p ≥ \frac 1 3$ gilt.
+
+\subsubsection*{Definition eines Tests}
+Seien $X_1, \dots, X_n$ $n$ unabhängige Stichprobenvariablen mit derselben Verteilung wie $X$ und $\vec{x}$ der zugehörige Stichprobenvektor. $\implies$ \\
+Für $\vec{x}$ muss nun die Frage beantwortet werden, ob wir für diesen Versuchsausgang die Hypothese annehmen oder ablehnen.
+
+\paragraph*{Ablehnungsbereich - kritischer Bereich}
+Sei $K := \{\vec{x} \in \mathbb{R}^n; \vec{x} \text{ führt zur Ablehnung der Hypothese}\}$ $\implies$ \\
+$K$ ist der Ablehnungsbereich bzw. kritischer Bereich des Tests.
+
+\paragraph*{Konstruktion des Ablehnungsbereiches}
+Gewöhnlich wird der Ablehnungsbereich $K$ konstruiert, indem man die Zufallsvariablen $X_1, \dots,X_n$ zu einer neuen Variablen $T$, der so genannten Testgröße, zusammenfasst. Dann unterteilt man den Wertebereich $\mathbb{R}$ von $T$ in mehrere Bereiche, die entweder zur Ablehnung der Hypothese führen sollen oder nicht. Dabei betrachtet man meist ein einzelnes halboffenes oder abgeschlossenes Intervall und spricht dann von einem einseitigen bzw. von einem zweiseitigen Test. \\
+
+Die Menge $\tilde{K} \subseteq \mathbb{R}$ enthalte die Werte von $T$, die zur Ablehnung der Hypothese führen sollen. \\
+$\tilde{K} \subseteq \mathbb{R}$ entspricht direkt dem Ablehnungsbereich $K = T^{-1}(\tilde{K} \subseteq \mathbb{R}^n)$
+
+\paragraph*{Testgröße}
+Die Testgröße erhält man, indem man die Zufallsvariablen $X_1, \dots, X_n$ zu einer neuen Variablen $T$ zusammenfasst. \\
+$T$ ist dann die Testgröße.
+
+\paragraph*{Hypothese und Alternative}
+\begin{tabular}{ll}
+	Nullhypothese ($H_0$): & die zu überprüfende Hypothese \\
+	Alternative ($H_1$): & Eine zweite Hypothese \\
+	triviale Alternative: & $H_0$ gilt nicht
+\end{tabular}
+
+\subsubsection*{Fehler bei statistischen Tests}
+Bei jedem Test können mit einer gewissen Wahrscheinlichkeit falsche Schlüsse gezogen werden. \\
+\begin{tabularx}{\columnwidth}{lX}
+	Fehler 1. Art: & $H_0$ gilt, wird aber abgelehnt (das Ergebnis $\vec{x}$ der Stichprobe liegt in K)\\
+	Fehler 2. Art: & $H_0$ gilt nicht, wird aber angenommen  (das Ergebnis $\vec{x}$ der Stichprobe liegt nicht in K)
+\end{tabularx}
+
+\paragraph*{Signifikanzniveau}
+Die Wahrscheinlichkeit für den Fehler 1. Art wird mit $\alpha$ bezeichnet. \\
+Der Fehler 1. Art wird auch $\alpha$-Fehler genannt. \\
+$\alpha$ ist das Signifikanzniveau des Tests \\
+
+\paragraph*{Güterfunktion}
+Die Güterfunktion $g(⋅, p)$ gibt allgemein die Wahrscheinlichkeit an, mit der ein Test die Nullhypothese verwirft.
+
+\subsubsection*{Allgemeines Vorgehen bei statistischen Tests}
+\begin{enumerate}
+	\item Formulierung von Annahmen (bzgl. Verteilung der Stichprobenvariablen und deren Unabhängigkeit)
+	\item Formulierung der Nullhypothese
+	\item Auswahl des Testverfahrens
+	\item Durchführung des Tests und Entscheidung
+\end{enumerate}
+
+\paragraph*{Berechnung der Fehlerwahrscheinlichkeiten}
+Fehlerw'keit 1. Art = $\sup_{p \in H_0} \Pr{}_p[T \in K] = \sup_{p \in H_0} \Pr{}_p[T ≤ k]$ \\
+Fehlerw'keit 2. Art = $\sup_{p \in H_1} \Pr{}_p[T \not\in K] = \sup_{p \in H_1} \Pr{}_p[T > k]$
+%TODO Prüfen auf Korrektheit S. 337 vs. 342
+
+\subsubsection*{Das richtige Testverfahren finden}
+\paragraph*{Anzahl der beteiligten Zufallsgrößen}
+\begin{tabularx}{\columnwidth}{lX}
+	Ein-Stichproben-Test: & eine Zufallsgröße \\
+	Zwei-Stichproben-Test: & zwei Zufallsgrößen mit potentiell unterschiedlichen Verteilungen, für die jeweils eine Stichprobe erzeugt wird
+\end{tabularx}
+
+\paragraph*{Formulierung der Nullhypothese}
+Welche Größe dient zur Definition der Nullhypothese? Hierbei werden in erster Linie Tests unterschieden, die Aussagen über verschiedene so genannte Lageparameter treffen, wie z.B. den Erwartungswert oder die Varianz der zugrunde liegenden Verteilungen. \\
+Gelegentlich wird zur Formulierung der Nullhypothese auch der so genannte Median betrachtet. Der Median einer Verteilung entspricht dem (kleinsten) Wert $x$ mit $F(x) = \frac 1 2$
+
+\paragraph*{Annahmen über die Zufallsgrößen}
+Was ist über die Verteilung der untersuchten Größe(n) bekannt? Bei entsprechenden Annahmen könnte es sich z.B. um die Art der Verteilung, den Erwartungswert oder die Varianz handeln.
+
+\subsubsection*{Ein-Stichproben-Tests für Lageparameter}
+\begin{itemize}
+	\item Gaußtest
+	\item t-Test
+	\item Wilcoxon-Test
+	\item $\chi^2$-Varianztest
+\end{itemize}
+
+\subsubsection*{Zwei-Stichproben-Tests für Lageparameter}
+\begin{itemize}
+	\item Zwei-Stichproben-t-Test
+	\item Zwei-Stichproben-Wilcoxon-Test
+\end{itemize}
+
+\subsubsection*{Nicht an Lageparametern orientierte Tests}
+\begin{itemize}
+	\item $\chi^2$-Anpassungstest
+\end{itemize}
+
+\subsubsection*{Tests}
+\paragraph*{Approximativer Binomialtest}
+Annahmen: \\
+$X_1, \dots, X_n$ seien unabhängig und identisch verteilt mit $\Pr[X_i = 1] = p$ und $\Pr[X_i = 0] = 1 -p$, wobei $p$ unbekannt sei. $n$ sei hinreichend groß, so dass die Approximation nach Grenzwertsatz von de Moivre brauchbare Ergebnisse liefert. \\
+
+\begin{tabular}{l @{ gegen } l|l}
+	\multicolumn{2}{l}{Hypothesen} & Ablehnungskriterium für $H_0$\\
+	\hline
+	$H_0 : p = p_0$ & $H_1 : p ≠ p_0$ & $|Z| > z_{1-\alpha/2}$ \\
+	$H_0 : p ≥ p_0$ & $H_1 : p < p_0$ & $Z < z_{\alpha}$ \\
+	$H_0 : p ≤ p_0$ & $H_1 : p > p_0$ & $Z > z_{1 - \alpha}$ \\
+\end{tabular} \\
+
+Testgröße: \\
+$Z := \frac{h - np_0}{\sqrt{np_0(1-p_0)}}$ \\
+wobei $h := X_1 + \dots + X_n$ die Häufigkeit bezeichnet, mit der die Ereignisse $X_i = 1$ aufgetreten sind.
+
+\paragraph*{Gaußtest}
+Annahmen: \\
+$X_1, \dots, X_n$ seien unabhängig und identisch verteilt mit $X_i \sim \mathcal{N}(\mu, \sigma^2)$, wobei $\sigma^2$ bekannt ist. Alternativ gelte $\mathbb{E}[X_i] = \mu$ und $\Var[X_i] = \sigma^2$, und $n$ sei groß genug. \\
+
+\begin{tabular}{l @{ gegen } l|l}
+	\multicolumn{2}{l}{Hypothesen} & Ablehnungskriterium für $H_0$\\
+	\hline
+	$H_0 : \mu = \mu_0$ & $H_1 : \mu ≠ \mu_0$ & $|Z| > z_{1-\alpha/2}$ \\
+	$H_0 : \mu ≥ \mu_0$ & $H_1 : \mu < \mu_0$ & $Z < z_{\alpha}$ \\
+	$H_0 : \mu ≤ \mu_0$ & $H_1 : \mu > \mu_0$ & $Z > z_{1 - \alpha}$ \\
+\end{tabular} \\
+
+Testgröße: \\
+$Z := \frac{\bar{X} - \mu_0}{\sigma}\sqrt{n}$
+
+\paragraph*{t-Test}
+Annahmen: \\
+$X_1, \dots, X_n$ seien unabhängig und identisch verteilt mit $X_i \sim \mathcal{N}(\mu, \sigma^2)$. $S^2$ sei die Stichprobenvarianz. Alternativ gelte $\mathbb{E}[X_i] = \mu$ und $\Var[X_i] = \sigma^2$, und $n$ sei groß genug. \\
+
+\begin{tabular}{l @{ gegen } l|l}
+	\multicolumn{2}{l}{Hypothesen} & Ablehnungskriterium für $H_0$\\
+	\hline
+	$H_0 : \mu = \mu_0$ & $H_1 : \mu ≠ \mu_0$ & $|T| > t_{n - 1, 1 - \alpha/2}$ \\
+	$H_0 : \mu ≥ \mu_0$ & $H_1 : \mu < \mu_0$ & $T < t_{n - 1, \alpha}$ \\
+	$H_0 : \mu ≤ \mu_0$ & $H_1 : \mu > \mu_0$ & $T > t_{n - 1, 1 - \alpha}$ \\
+\end{tabular} \\
+
+Testgröße: \\
+$T := \frac{\bar{X} - \mu_0}{S}\sqrt{n}$\\
+
+\paragraph*{Zwei-Stichproben-t-Test}
+Annahmen: \\
+$X_1, \dots, X_m$ und $Y_1, \dots, Y_n$ seien unabhängig und jeweils identisch verteilt, wobei $X_i \sim \mathcal{N}(\mu_X, \sigma_X^2)$ und $Y_i \sim \mathcal{N}(\mu_Y, \sigma_Y^2)$ gelte. Die Varianzen seien identisch, also $\sigma_X^2 = \sigma_Y^2$ \\
+
+\begin{tabular}{l @{ gegen } l|l}
+	\multicolumn{2}{l}{Hypothesen} & Ablehnungskriterium für $H_0$\\
+	\hline
+	$H_0 : \mu_X = \mu_Y$ & $H_1 : \mu_X ≠ \mu_Y$ & $|T| > t_{m + n - 2, 1 - \alpha/2}$ \\
+	$H_0 : \mu_X ≥ \mu_Y$ & $H_1 : \mu_X < \mu_Y$ & $T < t_{m + n - 2, \alpha}$ \\
+	$H_0 : \mu_X ≤ \mu_Y$ & $H_1 : \mu_X > \mu_Y$ & $T > t_{m + n - 2, 1 - \alpha}$ \\
+\end{tabular} \\
+
+Testgröße: \\
+$T := \sqrt{\frac{n + m - 2}{\frac 1 m + \frac 1 n}} ⋅ \frac{\bar{X} - \bar{Y}}{\sqrt{(m - 1) ⋅ S_X^2 + (n - 1) ⋅ S_Y^2}}$
+
+\paragraph*{$\chi^2$-Anpassungstest}
+Annahmen: \\
+$X_1, \dots, X_n$ seien unabhängig und identisch verteilt mit $W_{X_i} = \{1, \dots, k\}$. \\
+
+\begin{tabular}{ll}
+\multicolumn{2}{l}{Hypothesen} \\
+\hline
+$H_0 : \Pr[X = i] = p_i$ & für $i = 1, \dots, k$ \\
+$H_1 : \Pr[X = i] ≠ p_i$ & für mindestens ein $i \in \{1, \dots, k\}$
+\end{tabular} \\
+
+Ablehnungskriterium für $H_0$ bei Signifikanzniveau $\alpha$: \\
+$T > \chi_{k - 1, 1 - \alpha}^2$, \\
+dabei sollte gelten, dass $np_i ≥ 1$ für alle $i$ und $np_i ≥ 5$ für mindestens $80\%$ der Werte $i = 1, \dots, k$ \\
+
+Testgröße: \\
+$T = \sum_{i = 1}^k \frac{(h_i - np_i)^2}{np_i}$, \\
+wobei $h_i$ die Häufigkeit angibt, mit der $X_1, \dots, X_n$ den Wert $i$ angenommen haben.
+
+\newpage
+
+\section*{Stochastische Prozesse}
+Wir betrachten zeitliche Folgen von Zufallsexperimenten. Mathematisch beschreibt
+man diese durch einen so genannten stochastischen Prozess. Darunter versteht man
+eine Folge von Zufallsvariablen $(X_t)_{t \in T}$, die das Verhalten des Systems zu
+verschiedenen Zeitpunkten $t$ angeben. \\
+
+Sei $T = \mathbb{N}_0$ $\implies$ stochastische Prozesse mit diskreter Zeit. \\
+Sei $T = \mathbb{R}_0^+$ $\implies$ stochastische Prozesse mit kontinuierlicher Zeit. \\
+
+Eine besonders einfache Art von stochastischen Prozessen sind so genannte
+Markov-Ketten. Diese haben die Eigenschaft, dass der nächste Zustand des Prozesses
+zwar vom aktuellen Zustand abhängen darf, nicht aber von der Historie, d.h. davon,
+wie der aktuelle Zustand erreicht wurde.
+
+\subsection*{Markov-Kette}
+Eine (endliche) Markov-Kette (mit diskreter Zeit) über der \\
+Zustandsmenge $S = \{0, \dots n - 1\}$ \\
+besteht aus einer unendlichen Folge von \\
+Zufallsvariablen $(X_t)_{t \in \mathbb{N}_0}$ mit \\
+Wertemenge $S$ \\
+sowie der Starterteilung $q_0$ mit $q_0^T \in \mathbb{R}^n$. \\
+Die Komponenten von $q_0$ sind $≥ 0$ und addieren sich zu 1. \\
+Für jede Indexmenge $I \subseteq \{0, \dots, t - 1\}$ und beliebige Zustände $i, j, s_k (k \in I)$ gilt: \\
+$\Pr[X_{t+1} = j | X_t = i,~\forall k \in I : X_k = s_k] = \Pr[X_{t + 1} = j | X_t = i]$
+
+\paragraph*{Startverteilung}
+$q_0 = (p_{\varepsilon 0}, p_{\varepsilon 1}, \dots, p_{\varepsilon n})$ mit $S = {0, \dots, n}$, wobei $p_{\varepsilon i}$ die Wahrscheinlichkeit angibt im Zustand $i$ zu starten.
+
+\paragraph*{Zeithomogene Markov-Kette}
+Sind die Werte $p_{ij} := \Pr[X_{t+1} = j | X_t = i]$ von $t$ unabhängig, so nennt man die Markov-Kette (zeit)homogen.
+
+\paragraph*{Übergangsmatrix}
+Sei die Markov-Kette homogen. $\implies$ \\
+Die Übergangsmatrix ist: \\
+$P = (p_{ij})_{0 ≤ i,j < n} = \begin{bmatrix}
+	p_{00} & \dots & p_{0n} \\
+	\vdots & \ddots & \vdots \\
+	p_{n0} & \dots & p_{nn}
+\end{bmatrix}$ \\
+
+Knoten $\hat{=}$ Zustände $S$ \\
+Kanten $\hat{=}$ Übergangswahrscheinlichkeit
+
+\paragraph*{Unendliche Markov-Kette}
+Sei $S = \mathbb{N}_0$ $\implies$ \\
+die Markov-Kette ist unendlich.
+
+\subsubsection*{Wahrscheinlichkeitsraum einer Markov-Kette}
+Man betrachte die Kette von der Zeit $0$ bis $t_0$. Sei $\vec{x} = (x_0, x_1, \dots, x_{t_0})$ die Folge von Zuständen, die von der Kette in dieser Zeit durchlaufen wurde und $\Omega \subseteq S^{t_0 + 1}$ die Menge möglicher Zustandsfolgen. \\
+Zu einer beliebigen Folge $\omega := (x_0, x_1, \dots, x_{t_0}) \in \Omega$ ist der diskrete Wahrscheinlichkeitsraum: \\
+$\Pr[\omega] = (q_0)_{x_0} ⋅ \prod_{i=1}^{t_0} \Pr[X_i = x_i | X_{i-1} = x_{i - 1}]$
+
+\subsubsection*{Berechnung von Übergangswahrscheinlichkeiten}
+Die Situation zum Zeitpunkt $t$ wird durch den Zustandsvektor $q_t$ (Zeilenvektor) beschrieben. \\
+$(q_t)_i$ bezeichnet die Wahrscheinlichkeit, mit der sich die Kette nach $t$ Schritten im Zustand $i$ aufhält. \\
+Es gilt: \\
+$\Pr[X_{t+1} = k] = \sum_{i=0}^{n-1} \Pr[X_{t+1} = k | X_t = i] ⋅ \Pr[X_t = i]$ \\
+also $(q_{t + 1})_k = \sum_{i = 0}^{n - 1} p_{ik} ⋅ (q_t)_i$ \\
+bzw. $q_{t + 1} = q_t ⋅ P$ \\
+
+$q_t = q_0 ⋅ P^t$ und $q_{t + k} = q_t ⋅ P^k$ \\
+
+Die Einträge $P^k$ geben an, mit welcher Wahrscheinlichkeit ein Übergang vom Zustand $i$ zum Zustand $j$ in genau $k$ Schritten erfolgt: \\
+
+$p_{ij}^{(k)} := \Pr[X_{t + k} = j | X_t = i] = (P^k)_{ij}$
+
+\paragraph*{Exponentiation von Matrizen}
+Sei $P$ diagonalisierbar $\implies$ \\
+$P^k = B ⋅ D^k ⋅ B^{-1}$
+
+\subsubsection*{Übergangszeit}
+Die Anzahl der Schritte, die von der Markov-Kette für den Weg von Zustand $i$ nach Zustand $j$ benötigt werden, wird als Übergangszeit bezeichnet und ist definiert durch: \\
+$T_{ij} := \min \{n ≥ 0 | X_n = j, \text{wenn} X_0 =i\}$ \\
+
+Wenn $j$ nie erreicht wird gilt: $T_{ij} = ∞$
+
+\subsubsection*{Rückkehrzeit}
+Die Anzahl der Schritte, die von der Markov-Kette benötigt wird, um von Zustand $i$ zum Zustand $i$ zurückzukehren, wird als Rückkehrzeit bezeichnet und ist definiert durch: \\
+$T_i := T_{ii} = \min \{n ≥ 1 | X_n = i, \text{wenn} X_0 = i \}$
+
+\subsubsection*{Ankunftswahrscheinlichkeit}
+Die Wahrscheinlichkeit in beliebig vielen Schritten vom Zustand $i$ in den Zustand $j$ zu gelangen, wird als Ankunftswahrscheinlichkeit bezeichnet und ist definiert durch: \\
+$f_{ij} := \Pr[T_{ij} < ∞] = p_{ij} + \sum_{k ≠ j} p_{ik} ⋅ f_{kj}$ für alle $i, j \in S, i ≠ j$
+
+\subsubsection*{Rückkehrwahrscheinlichkeit}
+Die Wahrscheinlichkeit in beliebig vielen Schritten vom Zustand $j$ in den Zustand $j$ zurückzukehren, wird als Rückkehrwahrscheinlichkeit bezeichnet und ist definiert durch: \\
+$f_j := f_{jj} = \Pr[T_j < ∞] = p_{jj} + \sum_{k ≠ j} p_{jk} ⋅ f_{kj}$
+
+\subsubsection*{erwartete Übergangszeit}
+$h_{ij} := \mathbb{E}[T_{ij}] = 1 + \sum_{k ≠ j} p_{ik} ⋅ h_{kj}$ für alle $i,j \in S, i ≠ j$ \\
+sofern die Erwartungswerte $h_{ij}$ und $h_{kj}$ existieren.
+
+\subsubsection*{erwartete Rückkehrzeit}
+$h_j := h_{jj} = \mathbb{E}[T_j] = 1 + \sum_{k ≠ j} p_{jk} ⋅ h_{kj}$ \\
+sofern der Erwartungswert $h_{kj}$ existiert.
+
+\subsubsection*{Gambler's Ruin Problem}
+Sei folgende Markov-Kette gegeben mit $q = 1 - p$: \\
+
+\begin{tikzpicture}
+	\node [circle, draw, minimum size=9mm] (0) at (0,0) {0};
+		\node [coordinate, left of=0] (a1) {};
+		\draw[-, bend angle=65, bend left](0) edge [] node [] {} (a1);
+		\draw[-, bend angle=65, bend left](a1) edge [] node [above] {1} (0);
+	\node [circle, draw, minimum size=9mm, xshift=5mm, right of=0] (1) {1};
+		\draw[->, bend angle=45, bend left](1) edge [] node [below] {q} (0);
+	\node [circle, draw, right of=1, minimum size=9mm, xshift=5mm] (2) {2};
+		\draw[->, bend angle=45, bend left](1) edge [] node [above] {p} (2);
+		\draw[->, bend angle=45, bend left](2) edge [] node [below] {q} (1);
+	\node [circle, right of=2, minimum size=9mm, xshift=5mm] (3) {...};
+		\draw[->, bend angle=45, bend left](2) edge [] node [above] {p} (3);
+		\draw[->, bend angle=45, bend left](3) edge [] node [below] {q} (2);
+	\node [circle, draw, right of=3, minimum size=9mm, xshift=5mm] (4) {m-1};
+		\draw[->, bend angle=45, bend left](3) edge [] node [above] {p} (4);
+		\draw[->, bend angle=45, bend left](4) edge [] node [below] {q} (3);
+	\node [circle, draw, right of=4, minimum size=9mm, xshift=5mm] (m) {m};
+		\draw[->, bend angle=45, bend left](4) edge [] node [above] {p} (m);
+		\node [coordinate, right of=m] (a2) {};
+		\draw[-, bend angle=65, bend left](m) edge [] node [above] {1} (a2);
+		\draw[-, bend angle=65, bend left](a2) edge [] node [] {} (m);
+\end{tikzpicture} \\
+
+$\implies f_{i,m} = \frac{1 - \Big(\frac{1 - p}{p}\Big)^j}{1 - \Big(\frac{1 -p}{p}\Big)^m}$
+
+\subsubsection*{Stationäre Verteilung}
+Sei $P$ die Übergangsmatrix einer Markov-Kette. Als stationäre Verteilung dieser Markov-Kette wird der Zustandsvektor $\pi$ genannt, wenn gilt: \\
+$\pi = \pi ⋅ P$ \\
+
+Bedeutung: \\
+Wenn die Markov-Kette einmal den Zustandsvektor $\pi$ angenommen hat, so bleibt dieser bei allen weiteren Übergängen erhalten. \\
+
+Nicht alle Markov-Ketten erfüllen diese Eigenschaft.
+
+\subsubsection*{absorbierend, transient, rekurrent}
+\paragraph*{absorbierend}
+Ein Zustand $i$ heißt absorbierend, wenn aus ihm keine Übergänge herausführen, d.h. $p_{ij} = 0$ für alle $j ≠ i$ und folglich $p_{ii} = 1$
+
+\paragraph*{transient}
+Ein Zustand $i$ heißt transient, wenn $f_i < 1$, d.h. mit positiver Wahrscheinlichkeit $1 - f_i > 0$ kehrt der Prozess nach einem Besuch von $i$ nie mehr dorthin zurück.
+
+\paragraph*{rekurrent}
+Ein Zustand $i$ mit $f_i = 1$ heißt rekurrent.
+
+\subsubsection*{Irreduzibilität}
+Eine Markov-Kette heißt irreduzibel, wenn es für alle Zustandspaare $i, j \in S$ eine Zahl $n \in \mathbb{N}$ gibt, so dass $p_{ij}^{(n)} > 0$ \\
+
+Bedeutung: \\
+Jeder Zustand kann von jedem anderen Zustand aus mit positiver Wahrscheinlichkeit erreicht werden, wenn nur genügend viele Schritte durchgeführt werden. $\implies$ Graph ist stark zusammenhängend. \\
+
+Für irreduzible endliche Markov-Ketten gilt: $f_{ij} = \Pr[T_{ij} < ∞] = 1$ für alle Zustände $i, j \in S$ und alle $h_{ij} = \mathbb{E}[T_{ij}]$ existieren. \\
+
+Eine irreduzible endliche Markov-Kette besitzt eine eindeutige stationäre Verteilung $\pi$ und es gilt $\pi_j = \frac 1 {h_{jj}}$ für alle $j \in S$
+
+\subsubsection*{Aperiodizität}
+\paragraph*{Periode}
+Die Periode eines Zustands $j$ ist definiert als die größte Zahl $\xi \in \mathbb{N}$, so dass gilt: \\
+$\{n \in \mathbb{N}_0 | p_{jj}^{(n)} > 0\} \subseteq \{i ⋅ \xi | i \in \mathbb{N}_0\}$ \\
+
+Ein Zustand mit Periode $\xi = 1$ heißt aperiodisch. \\
+
+Ein Zustand $i \in S$ ist genau dann aperiodisch, falls gilt: \\
+Es gibt ein $n_0 \in \mathbb{N}$, sodass $p_{ii}^{(n)} > 0$ für alle $n \in \mathbb{N}, n ≥ n_0$ \\
+
+Sind alle Zustände aperiodisch $\implies$ die Markov-Kette ist aperiodisch. \\
+
+Ein Zustand $i \in S$ einer endlichen Markov-Kette ist sicherlich dann aperiodisch, wenn er im Übergangsdiagramm
+\begin{itemize}
+	\item eine Schleife besitzt (also $p_{ii} > 0$) oder
+	\item auf mindestens zwei geschlossenen Wegen $W_1$ und $W_2$ liegt, deren Längen $l_1$ und $l_2$ teilerfremd sind (für die also $\text{ggT}(l_1,l2) = 1$ gilt).
+\end{itemize}
+
+\subsubsection*{Ergodizität}
+Irreduzible aperiodische Markov-Ketten nennt man ergodisch. \\
+
+Für ergodische endliche Markov-Ketten gilt: \\
+Es gibt ein $t \in \mathbb{N}$, sodass unabhängig vom Startzustand $(q_t)_i > 0$ für alle $i \in S$ \\
+
+Für jede ergodische endliche Markov-Kette $(X_t)_{t \in \mathbb{N}_0}$ gilt unabhängig vom Startzustand: \\
+$\lim_{n → ∞} q_n = \pi$, \\
+wobei $\pi$ die eindeutige stationäre Verteilung der Kette bezeichnet.
+
+\subsubsection*{Doppeltstochastische Matrizen}
+\paragraph*{stochastische Matrizen}
+Eine $n \times n$ Matrix $P = (p_{ij})_{0 ≤ i,j < n}$ heißt stochastisch, falls alle Einträge $p_{ij}$ nichtnegativ und alle Zeilensummen gleich 1 sind. Also: \\
+$\sum_{j = 0}^{n - 1} p_{ij} = 1$ für alle $i = 0, \dots, n - 1$ \\
+
+Die Übergangsamtrix einer Markov-Kette ist immer stochastisch und umgekehrt.
+
+\paragraph*{doppeltstochastische Matrizen}
+Eine $n \times n$ Matrix $P = (p_{ij})_{0 ≤ i,j < n}$ heißt doppeltstochastisch, falls alle Einträge $p_{ij}$ nichtnegativ und alle Zeilensummen und alle Spaltensummen gleich 1 sind. Also: \\
+$\sum_{j = 0}^{n - 1} p_{ij} = 1$ für alle $i = 0, \dots, n - 1$ und \\
+$\sum_{i = 0}^{n - 1} p_{ij} = 1$ für alle $j= 0, \dots, n - 1$ \\
+
+Sei $P$ eine doppeltstochastische $n \times n$ Matrix $\implies$ \\
+$\pi = \Big(\frac 1 n, \dots, \frac 1 n \Big)$ ist ein Eigenvektor zum Eigenwert 1 bezüglich der Multiplikation von links: $\pi = \pi ⋅ P$ \\
+
+Für jede ergodische endliche Markov-Kette $(X_t)_{t \in \mathbb{N}_0}$ mit doppeltstochastischer Übergangsmatrix gilt unabhängig vom Startzustand: \\
+$\lim_{t → ∞} q_t = \Big(\frac 1 n, \dots, \frac 1 n\Big)$, wobei $n$ die Kardinalität der Zustandsmenge bezeichne.
+
+
+
+
+
+
+
+
+
+
+\newpage
+\section*{Mathematische Grundlagen}
+\subsection*{Bekannte Reihen}
+\begin{tabular}{ll}
+	geometrische Reihe & $\suminfty[k = 0] p^k = \frac{1}{1-p}$ \\
+	& $\sum_{k = 0}^n{p^k} =
+	\begin{cases}
+		\frac{1 - p^{n + 1}}{1 - p} & p \neq 1 \\
+		n + 1 & p = 1
+	\end{cases}$ \\
+	Summe der natürlichen Zahlen & $\sum_{k=1}^n k = \frac{n(n + 1)}{2}$ \\
+	harmonische Reihe & $\suminfty{\frac{1}{k}} = \infty$ \\
+	alternierende harmonische Reihe & $\suminfty{(-1)^{k + 1} ⋅ \frac{1}{k}} = \ln(2)$ \\
+	& $\sum_{k = 1}^{∞} \frac{(sp)^k}{k} = \ln {\Big(\frac{1}{1 - sp}\Big)}$, \\
+	& ~~~~~falls $0 ≤ sp < 1$ \\
+	Exponentialreihe & $\suminfty[k = 0]{\frac{x^k}{k!}} = \exp(x)$
+\end{tabular}
+
+\subsection*{Bekannte Integrale}
+$I := \int_{-∞}^∞ e^{-\frac{x^2}{2}} dx = \sqrt{2 \pi}$
+
+\subsection*{Integralrechnung}
+\subsubsection*{Substitutionsregel}
+$\intab{f(g(x)) ⋅ g'(x)} = \int_{g(a)}^{g(b)} f(u) du$ \\
+
+Merkregel: \\
+$u = g(x)$, $du = g'(x) dx$ \\
+$a \Rightarrow g(a)$, $b \Rightarrow g(b)$ \\
+
+Beispiel: \\
+$\int_0^1 \sin(2x) ⋅ 2 dx$, $g(x) = 2x$, $f(g(x)) = \sin(2x)$, $g'(x) = 2$ \\
+$u:= 2x$, $du = 2 dx$, $g(0) = 0$, $g(1) = 2$ \\
+$\int_0^1 \sin(2x) ⋅ 2 dx = \int_0^2 \sin(u) du = [-\cos(u)]_0^2 = [-\cos(2x)]_0^1$
+
+\subsubsection*{Partielle Integration}
+$\intab{f(x)g'(x)} = [f(x) ⋅ g(x)]_a^b - \intab{f'(x) ⋅ g(x)}$	
+
+
+\subsection*{Kombinatorik}
+Anzahl an Möglichkeiten $k$ Elemente aus einer $n$-elementigen Menge zu ziehen: \\
+\begin{tabular}{|l|c|c|}
+	\hline
+	& geordnet & ungeordnet \\
+	\hline
+	mit zurücklegen & $n^k$ & $\binom{n + k - 1}{n - 1}$ \\
+	\hline
+	ohne zurücklegen & $n^{\underline{k}} = \frac{n!}{(n - k)!}$ & $\binom{n}{k} = \frac{n!}{k!(n - k)!}$ \\
+	\hline
+\end{tabular}
+
+\subsubsection*{Hypergeometrische Verteilung}
+Eine Zufallsvariable $X$ mit der Dichte \\
+$\Pr[X = x] = \frac{\binom{b}{x} \binom{a}{r - x}}{\binom{a + b}{r}}$ \\
+hypergeometrisch verteilt. \\
+Es beschreibt das Ziehen von $r$ Elementen ohne Zurücklegen aus einer Grundmenge der Mächtigkeit $a + b$ mit $b$ besonders ausgezeichneten Elementen. \\
+z.B: Ziehen von $x$ Buben aus einem Set von $32 = a + b$ Karten mit $4 = b$ besonders ausgezeichneten Elementen (Anzahl an Buben im Kartenset)
+
+\subsection*{Sonstiges}
+Sei $X \sim \mathcal{N}(\mu, \sigma^2)$ $\implies$ \\
+$\Pr[-x ≤ X ≤ x] = \Phi(x) - \Phi(-x) = 2\Phi(x) -1$
+
+
+\end{document}
